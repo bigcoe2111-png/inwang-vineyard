@@ -25,10 +25,6 @@
       background: #CBD5E1;
       border-radius: 9999px;
     }
-    .vine-pattern {
-      background-image: radial-gradient(#cbd5e1 2px, transparent 2px);
-      background-size: 24px 24px;
-    }
     .pop-in {
       animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     }
@@ -43,9 +39,30 @@
       from { opacity: 0; transform: translateY(15px); }
       to { opacity: 1; transform: translateY(0); }
     }
+    /* 동물들이 귀엽게 뛰는 애니메이션 */
+    @keyframes hop {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    .animate-hop {
+      animation: hop 1.5s infinite ease-in-out;
+    }
+    /* 나비/새가 공중에 떠다니는 애니메이션 */
+    @keyframes float {
+      0%, 100% { transform: translateY(0) translateX(0); }
+      50% { transform: translateY(-10px) translateX(5px); }
+    }
+    .animate-float {
+      animation: float 3s infinite ease-in-out;
+    }
+    /* 단어 단위로 줄바꿈 되도록 설정 */
+    .break-keep {
+      word-break: keep-all;
+      overflow-wrap: break-word;
+    }
   </style>
 </head>
-<body class="text-slate-800 antialiased min-h-screen pb-16">
+<body class="text-slate-800 antialiased min-h-screen pb-16 break-keep">
 
   <!-- 공통 Top Banner -->
   <header class="w-full pt-10 pb-8 px-4 text-center relative flex flex-col items-center">
@@ -54,14 +71,22 @@
       <i data-lucide="key" class="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform"></i>
     </button>
 
-    <div class="max-w-4xl mx-auto w-full mt-4">
+    <div class="max-w-4xl mx-auto w-full mt-4 flex flex-col items-center">
+      
+      <!-- 디데이 카운터 -->
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-100 text-indigo-700 font-extrabold text-sm sm:text-base shadow-sm mb-4 pop-in border border-indigo-200/50">
+        <i data-lucide="timer" class="w-4 h-4"></i>
+        <span>11/20 종료까지</span>
+        <span id="d-day-counter" class="text-indigo-900 bg-white px-2.5 py-0.5 rounded-md shadow-sm">D-??</span>
+      </div>
+
       <!-- 메인 타이틀 -->
       <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-5 cursor-pointer flex flex-wrap items-center justify-center gap-x-2 gap-y-3" onclick="switchView('home')">
         <span>인왕지구 포도원 : <span class="text-indigo-600">함께 쌓아가는</span> <span class="text-violet-600">은혜의 9주</span></span>
       </h1>
       
       <!-- 다니엘 6:10 부제목 -->
-      <p class="text-slate-500 text-[13px] sm:text-[15px] font-medium max-w-3xl mx-auto leading-relaxed px-4 break-keep bg-white py-3 px-5 rounded-2xl border border-slate-200 shadow-sm inline-block">
+      <p class="text-slate-500 text-[13px] sm:text-[15px] font-medium max-w-3xl mx-auto leading-relaxed px-4 bg-white py-3 px-5 rounded-2xl border border-slate-200 shadow-sm inline-block">
         "(단 6:10) 다니엘이 이 조서에 어인이 찍힌 것을 알고도 자기 집에 돌아가서는 그 방의 예루살렘으로 향하여 열린 창에서 전에 행하던대로 하루 세번씩 무릎을 꿇고 기도하며 그 하나님께 감사하였더라"
       </p>
     </div>
@@ -81,28 +106,31 @@
             <span class="text-xl">📊</span>
             <h2 class="text-lg sm:text-xl font-bold text-slate-900">현재 수확 현황</h2>
           </div>
-          <div class="text-xs font-semibold text-slate-400 bg-slate-50 px-3 py-1.5 rounded-full">실시간 업데이트</div>
+          <!-- 마지막 업데이트 시간 표시 영역 -->
+          <div id="last-updated-time" class="text-xs font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 px-3 py-1.5 rounded-full whitespace-nowrap shadow-sm">
+            최근 업데이트 없음
+          </div>
         </div>
 
         <!-- 상단 숫자 요약 -->
         <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-8 text-center">
           <div class="p-4 rounded-2xl bg-indigo-50 border border-indigo-100 shadow-sm">
-            <div class="text-xs font-bold text-indigo-500 mb-1">기도 포도알</div>
+            <div class="text-xs font-bold text-indigo-500 mb-1 whitespace-nowrap">기도 포도알</div>
             <div class="text-3xl font-black text-indigo-700" id="dash-prayer-seeds">0</div>
           </div>
           <div class="p-4 rounded-2xl bg-indigo-100 border border-indigo-200 shadow-sm">
-            <div class="text-xs font-bold text-indigo-600 mb-1">기도 포도송이</div>
+            <div class="text-xs font-bold text-indigo-600 mb-1 whitespace-nowrap">기도 포도송이</div>
             <div class="flex items-baseline justify-center gap-1">
               <span class="text-3xl font-black text-indigo-900" id="dash-prayer-bunches">0</span><span class="text-sm font-semibold text-indigo-600">송이</span>
             </div>
           </div>
           
           <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-100 shadow-sm">
-            <div class="text-xs font-bold text-emerald-500 mb-1">말씀 포도알</div>
+            <div class="text-xs font-bold text-emerald-500 mb-1 whitespace-nowrap">말씀 포도알</div>
             <div class="text-3xl font-black text-emerald-700" id="dash-word-seeds">0</div>
           </div>
           <div class="p-4 rounded-2xl bg-emerald-100 border border-emerald-200 shadow-sm">
-            <div class="text-xs font-bold text-emerald-600 mb-1">말씀 포도송이</div>
+            <div class="text-xs font-bold text-emerald-600 mb-1 whitespace-nowrap">말씀 포도송이</div>
             <div class="flex items-baseline justify-center gap-1">
               <span class="text-3xl font-black text-emerald-900" id="dash-word-bunches">0</span><span class="text-sm font-semibold text-emerald-600">송이</span>
             </div>
@@ -110,7 +138,7 @@
 
           <!-- 전체 포도송이 합계 -->
           <div class="p-4 rounded-2xl bg-gradient-to-br from-purple-100 to-fuchsia-100 border border-purple-200 shadow-sm col-span-2 md:col-span-1 flex flex-col justify-center">
-            <div class="text-xs font-bold text-purple-700 mb-1">전체 합계</div>
+            <div class="text-xs font-bold text-purple-700 mb-1 whitespace-nowrap">전체 합계</div>
             <div class="flex items-baseline justify-center gap-1">
               <span class="text-4xl font-black text-purple-900" id="dash-total-bunches">0</span>
               <span class="text-sm font-bold text-purple-700">/ 61송이</span>
@@ -120,33 +148,39 @@
 
         <!-- 시각적 포도나무 영역 -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="relative bg-white rounded-3xl overflow-hidden border-2 border-indigo-100 shadow-inner h-64 flex flex-col">
-            <div class="bg-indigo-50/80 px-4 py-3 border-b border-indigo-100 flex justify-between items-center z-10">
-              <h3 class="font-bold text-indigo-900 flex items-center gap-2"><span>🙏</span> 기도 포도나무</h3>
+          <!-- 기도 포도원 -->
+          <div class="relative bg-white rounded-3xl overflow-hidden border-2 border-indigo-100 shadow-inner h-72 flex flex-col">
+            <div class="bg-indigo-50/90 px-4 py-3 border-b border-indigo-100 flex justify-between items-center z-30 relative backdrop-blur-sm">
+              <h3 class="font-bold text-indigo-900 flex items-center gap-2"><span>🙏</span> 기도 포도원</h3>
             </div>
-            <div class="flex-1 vine-pattern bg-slate-50 relative p-4 overflow-y-auto custom-scrollbar">
-              <div id="tree-prayer-container" class="relative z-10 flex flex-wrap gap-2.5 items-start content-start min-h-full"></div>
+            <!-- 일러스트 렌더링 영역 -->
+            <div class="flex-1 bg-[#f0f9ff] relative overflow-hidden rounded-b-3xl">
+              <div id="tree-prayer-bg" class="absolute inset-0 z-0"></div>
+              <div id="tree-prayer-container" class="absolute inset-0 z-10 pointer-events-none"></div>
             </div>
           </div>
 
-          <div class="relative bg-white rounded-3xl overflow-hidden border-2 border-emerald-100 shadow-inner h-64 flex flex-col">
-            <div class="bg-emerald-50/80 px-4 py-3 border-b border-emerald-100 flex justify-between items-center z-10">
-              <h3 class="font-bold text-emerald-900 flex items-center gap-2"><span>📖</span> 말씀 포도나무</h3>
+          <!-- 말씀 포도원 -->
+          <div class="relative bg-white rounded-3xl overflow-hidden border-2 border-emerald-100 shadow-inner h-72 flex flex-col">
+            <div class="bg-emerald-50/90 px-4 py-3 border-b border-emerald-100 flex justify-between items-center z-30 relative backdrop-blur-sm">
+              <h3 class="font-bold text-emerald-900 flex items-center gap-2"><span>📖</span> 말씀 포도원</h3>
             </div>
-            <div class="flex-1 vine-pattern bg-slate-50 relative p-4 overflow-y-auto custom-scrollbar">
-              <div id="tree-word-container" class="relative z-10 flex flex-wrap gap-2.5 items-start content-start min-h-full"></div>
+            <!-- 일러스트 렌더링 영역 -->
+            <div class="flex-1 bg-[#f0fdf4] relative overflow-hidden rounded-b-3xl">
+              <div id="tree-word-bg" class="absolute inset-0 z-0"></div>
+              <div id="tree-word-container" class="absolute inset-0 z-10 pointer-events-none"></div>
             </div>
           </div>
         </div>
 
-        <!-- 직접 입력이 추가된 수동 관리자 패널 -->
-        <div id="admin-panel" class="hidden mt-6 pt-5 border-t-2 border-dashed border-red-200 bg-red-50/50 rounded-2xl p-4 sm:p-5">
-          <div class="flex items-center justify-between mb-4">
+        <!-- 직접 입력 패널 (수동 관리자 패널) -->
+        <div id="admin-panel" class="hidden mt-6 pt-5 border-t-2 border-dashed border-red-200 bg-red-50/50 rounded-2xl p-4 sm:p-5 space-y-4">
+          <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-2">
               <i data-lucide="shield-alert" class="w-5 h-5 text-red-600"></i>
-              <h4 class="font-bold text-red-700 text-sm sm:text-base">마스터 조작 패널 (현황 업데이트용)</h4>
+              <h4 class="font-bold text-red-700 text-sm sm:text-base">마스터 조작 패널</h4>
             </div>
-            <button onclick="closeAdminPanel()" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-lg transition">패널 닫기</button>
+            <button onclick="closeAdminPanel()" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-lg transition whitespace-nowrap">패널 닫기</button>
           </div>
           
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -187,7 +221,7 @@
           <div class="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
             <i data-lucide="book-open" class="w-7 h-7"></i>
           </div>
-          <h3 class="text-xl font-extrabold text-slate-800 mb-1">포도원 프로젝트 설명</h3>
+          <h3 class="text-xl font-extrabold text-slate-800 mb-1">프로젝트 설명</h3>
           <p class="text-sm text-slate-500 font-medium text-center">전체 일정, 상세 계획표 및 61송이 달성 목표 알아보기</p>
         </button>
 
@@ -215,7 +249,7 @@
         <div class="absolute -right-10 -top-10 text-[120px] opacity-10">🍇</div>
         <div class="relative z-10">
           <div class="flex items-center gap-2 mb-4">
-            <span class="px-3 py-1 rounded-full bg-indigo-500/30 text-indigo-200 text-xs font-bold border border-indigo-400/30">말씀 기반 챌린지 룰</span>
+            <span class="px-3 py-1 rounded-full bg-indigo-500/30 text-indigo-200 text-xs font-bold border border-indigo-400/30 whitespace-nowrap">말씀 기반 프로젝트 룰</span>
           </div>
           <blockquote class="text-lg sm:text-2xl font-bold leading-relaxed mb-6 text-indigo-50">
             "천국은 마치 품꾼을 얻어 포도원에 들여보내려고 이른 아침에 나간 집 주인과 같으니"
@@ -246,13 +280,20 @@
           </div>
           <div class="bg-slate-50 rounded-2xl p-5 border border-slate-100">
             <div class="text-3xl mb-2">🧺</div>
-            <h3 class="font-bold text-base text-slate-800 mb-1">20알 = 포도 1송이</h3>
+            <h3 class="font-bold text-base text-slate-800 mb-1 whitespace-nowrap">20알 = 포도 1송이</h3>
             <p class="text-xs text-slate-600 leading-relaxed">20개가 모이면 포도 1송이 완성 (마 20:1)</p>
           </div>
-          <div class="bg-indigo-50 rounded-2xl p-5 border border-indigo-200">
+          <div class="bg-indigo-50 rounded-2xl p-5 border border-indigo-200 flex flex-col">
             <div class="text-3xl mb-2">🎯</div>
-            <h3 class="font-bold text-base text-indigo-900 mb-1">목표 : 합산 61송이!</h3>
-            <p class="text-xs text-indigo-700 leading-relaxed">기도+말씀 합쳐서 61송이 수확 시 목표 달성!</p>
+            <h3 class="font-bold text-base text-indigo-900 mb-1 whitespace-nowrap">목표 : 합산 61송이!</h3>
+            <p class="text-xs text-indigo-700 leading-relaxed mb-3">기도+말씀 합쳐서 61송이 수확 시 목표 달성!</p>
+            <!-- 61송이 의미 설명 박스 추가 -->
+            <div class="mt-auto bg-indigo-100/70 p-2.5 rounded-lg flex items-start gap-1.5 border border-indigo-100 shadow-sm">
+              <span class="text-indigo-500 text-xs mt-0.5">💡</span>
+              <p class="text-[11px] text-indigo-800 leading-relaxed font-medium">
+                <strong>61송이의 비밀:</strong> 현재 인왕지구 카톡방 인원수(61명)에서 착안했습니다.
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -261,7 +302,7 @@
       <section class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-sm">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-4 border-b border-slate-100 gap-2">
           <div class="flex items-center gap-2">
-            <div class="w-2.5 h-2.5 rounded-full bg-indigo-600"></div>
+            <div class="w-2.5 h-2.5 rounded-full bg-indigo-600 shrink-0"></div>
             <h2 class="text-lg sm:text-xl font-bold text-slate-900">누적 진행 구조 (스텝 다이어그램)</h2>
           </div>
           <span class="text-xs sm:text-sm text-slate-400 font-medium">3주마다 새로운 훈련이 더해집니다</span>
@@ -276,7 +317,7 @@
             <div class="py-3 px-4 rounded-xl bg-indigo-600 text-white font-bold text-sm text-center shadow-sm">🙏 기도</div>
             <div class="py-3 px-4 rounded-xl bg-slate-50 border border-dashed border-slate-200 text-slate-300 text-sm text-center">-</div>
             <div class="py-3 px-4 rounded-xl bg-slate-50 border border-dashed border-slate-200 text-slate-300 text-sm text-center">-</div>
-            <div class="text-center pt-2"><span class="inline-block px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-semibold">기도 단독 집중</span></div>
+            <div class="text-center pt-2"><span class="inline-block px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-semibold whitespace-nowrap">기도 단독 집중</span></div>
           </div>
           <div class="flex flex-col space-y-3">
             <div class="text-center pb-2">
@@ -286,7 +327,7 @@
             <div class="py-3 px-4 rounded-xl bg-indigo-600 text-white font-bold text-sm text-center shadow-sm">🙏 기도</div>
             <div class="py-3 px-4 rounded-xl bg-emerald-600 text-white font-bold text-sm text-center shadow-sm">📖 말씀</div>
             <div class="py-3 px-4 rounded-xl bg-slate-50 border border-dashed border-slate-200 text-slate-300 text-sm text-center">-</div>
-            <div class="text-center pt-2"><span class="inline-block px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold">기도 + 말씀</span></div>
+            <div class="text-center pt-2"><span class="inline-block px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold whitespace-nowrap">기도 + 말씀</span></div>
           </div>
           <div class="flex flex-col space-y-3">
             <div class="text-center pb-2">
@@ -296,7 +337,7 @@
             <div class="py-3 px-4 rounded-xl bg-indigo-600 text-white font-bold text-sm text-center shadow-sm">🙏 기도</div>
             <div class="py-3 px-4 rounded-xl bg-emerald-600 text-white font-bold text-sm text-center shadow-sm">📖 말씀</div>
             <div class="py-3 px-4 rounded-xl bg-amber-500 text-white font-bold text-sm text-center shadow-sm">🤝 전도</div>
-            <div class="text-center pt-2"><span class="inline-block px-3 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-semibold">기도 + 말씀 + 전도</span></div>
+            <div class="text-center pt-2"><span class="inline-block px-3 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-semibold whitespace-nowrap">기도 + 말씀 + 전도</span></div>
           </div>
         </div>
       </section>
@@ -310,36 +351,36 @@
         <div class="space-y-6">
           <div>
             <div class="flex justify-between items-center text-xs sm:text-sm font-bold mb-2">
-              <span class="flex items-center gap-1.5 text-indigo-800"><span>🙏</span> 기도 (총 9주간)</span>
-              <span class="text-indigo-600">9/18 ~ 11/20 (100%)</span>
+              <span class="flex items-center gap-1.5 text-indigo-800 whitespace-nowrap"><span>🙏</span> 기도 (총 9주간)</span>
+              <span class="text-indigo-600 whitespace-nowrap">9/18 ~ 11/20 (100%)</span>
             </div>
             <div class="w-full bg-slate-100 rounded-xl h-10 p-1 flex">
-              <div class="w-full bg-indigo-600 rounded-lg flex items-center justify-between px-3 text-white text-xs font-bold shadow-sm">
-                <span>9/18 시작</span><span>9주간</span><span>11/20 종료</span>
+              <div class="w-full bg-indigo-600 rounded-lg flex items-center justify-between px-3 text-white text-xs font-bold shadow-sm whitespace-nowrap">
+                <span>9/18 시작</span><span class="hidden sm:inline">9주간</span><span>11/20 종료</span>
               </div>
             </div>
           </div>
           <div>
             <div class="flex justify-between items-center text-xs sm:text-sm font-bold mb-2">
-              <span class="flex items-center gap-1.5 text-emerald-800"><span>📖</span> 말씀 (총 6주간)</span>
-              <span class="text-emerald-600">10/9 ~ 11/20 (67%)</span>
+              <span class="flex items-center gap-1.5 text-emerald-800 whitespace-nowrap"><span>📖</span> 말씀 (총 6주간)</span>
+              <span class="text-emerald-600 whitespace-nowrap">10/9 ~ 11/20 (67%)</span>
             </div>
             <div class="w-full bg-slate-100 rounded-xl h-10 p-1 flex">
-              <div class="w-1/3 flex items-center justify-center text-slate-400 text-xs font-medium">1~3주 (기도)</div>
-              <div class="w-2/3 bg-emerald-600 rounded-lg flex items-center justify-between px-3 text-white text-xs font-bold shadow-sm">
-                <span>10/9 시작</span><span>6주간</span><span>11/20</span>
+              <div class="w-1/3 flex items-center justify-center text-slate-400 text-xs font-medium whitespace-nowrap">1~3주 (기도)</div>
+              <div class="w-2/3 bg-emerald-600 rounded-lg flex items-center justify-between px-3 text-white text-xs font-bold shadow-sm whitespace-nowrap">
+                <span>10/9 시작</span><span class="hidden sm:inline">6주간</span><span>11/20</span>
               </div>
             </div>
           </div>
           <div>
             <div class="flex justify-between items-center text-xs sm:text-sm font-bold mb-2">
-              <span class="flex items-center gap-1.5 text-amber-800"><span>🤝</span> 전도 (총 3주간)</span>
-              <span class="text-amber-600">10/30 ~ 11/20 (33%)</span>
+              <span class="flex items-center gap-1.5 text-amber-800 whitespace-nowrap"><span>🤝</span> 전도 (총 3주간)</span>
+              <span class="text-amber-600 whitespace-nowrap">10/30 ~ 11/20 (33%)</span>
             </div>
             <div class="w-full bg-slate-100 rounded-xl h-10 p-1 flex">
-              <div class="w-2/3 flex items-center justify-center text-slate-400 text-xs font-medium">1~6주 (기도+말씀)</div>
-              <div class="w-1/3 bg-amber-500 rounded-lg flex items-center justify-between px-3 text-white text-xs font-bold shadow-sm">
-                <span>10/30 시작</span><span>3주간</span><span>11/20</span>
+              <div class="w-2/3 flex items-center justify-center text-slate-400 text-xs font-medium whitespace-nowrap">1~6주 (기도+말씀)</div>
+              <div class="w-1/3 bg-amber-500 rounded-lg flex items-center justify-between px-3 text-white text-xs font-bold shadow-sm whitespace-nowrap">
+                <span>10/30 시작</span><span class="hidden sm:inline">3주간</span><span>11/20</span>
               </div>
             </div>
           </div>
@@ -355,7 +396,7 @@
         <div class="overflow-x-auto custom-scrollbar">
           <table class="w-full text-left border-collapse text-xs sm:text-sm">
             <thead>
-              <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold">
+              <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold whitespace-nowrap">
                 <th class="py-3 px-4 rounded-l-xl">구분</th>
                 <th class="py-3 px-4">진행 기간</th>
                 <th class="py-3 px-4">주차</th>
@@ -365,32 +406,32 @@
             </thead>
             <tbody class="divide-y divide-slate-100 text-slate-700">
               <tr class="hover:bg-indigo-50/30 transition">
-                <td class="py-3.5 px-4 font-bold flex items-center gap-1.5 text-indigo-700"><span>🙏</span> 기도</td>
-                <td class="py-3.5 px-4 font-medium">9/18(금) ~ 11/20(금)</td>
-                <td class="py-3.5 px-4"><span class="px-2 py-0.5 rounded bg-indigo-100 text-indigo-700 font-semibold text-xs">총 9주</span></td>
-                <td class="py-3.5 px-4">자유 사진 + 나눔 글 + 카운팅 표기</td>
-                <td class="py-3.5 px-4 font-medium">1회 = 1알</td>
+                <td class="py-3.5 px-4 font-bold flex items-center gap-1.5 text-indigo-700 whitespace-nowrap"><span>🙏</span> 기도</td>
+                <td class="py-3.5 px-4 font-medium whitespace-nowrap">9/18(금) ~ 11/20(금)</td>
+                <td class="py-3.5 px-4 whitespace-nowrap"><span class="px-2 py-0.5 rounded bg-indigo-100 text-indigo-700 font-semibold text-xs">총 9주</span></td>
+                <td class="py-3.5 px-4 min-w-[200px]">자유 사진 + 나눔 글 + 카운팅 표기</td>
+                <td class="py-3.5 px-4 font-medium whitespace-nowrap">1회 = 1알</td>
               </tr>
               <tr class="hover:bg-emerald-50/30 transition">
-                <td class="py-3.5 px-4 font-bold flex items-center gap-1.5 text-emerald-700"><span>📖</span> 말씀</td>
-                <td class="py-3.5 px-4 font-medium">10/9(금) ~ 11/20(금)</td>
-                <td class="py-3.5 px-4"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 font-semibold text-xs">총 6주</span></td>
-                <td class="py-3.5 px-4">10/8(목) 상세 공지</td>
-                <td class="py-3.5 px-4 font-medium">1회 = 1알</td>
+                <td class="py-3.5 px-4 font-bold flex items-center gap-1.5 text-emerald-700 whitespace-nowrap"><span>📖</span> 말씀</td>
+                <td class="py-3.5 px-4 font-medium whitespace-nowrap">10/9(금) ~ 11/20(금)</td>
+                <td class="py-3.5 px-4 whitespace-nowrap"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 font-semibold text-xs">총 6주</span></td>
+                <td class="py-3.5 px-4 min-w-[200px]">10/8(목) 상세 공지</td>
+                <td class="py-3.5 px-4 font-medium whitespace-nowrap">1회 = 1알</td>
               </tr>
               <tr class="hover:bg-amber-50/30 transition">
-                <td class="py-3.5 px-4 font-bold flex items-center gap-1.5 text-amber-700"><span>🤝</span> 전도</td>
-                <td class="py-3.5 px-4 font-medium">10/30(금) ~ 11/20(금)</td>
-                <td class="py-3.5 px-4"><span class="px-2 py-0.5 rounded bg-amber-100 text-amber-700 font-semibold text-xs">총 3주</span></td>
-                <td class="py-3.5 px-4">추후 안내</td>
-                <td class="py-3.5 px-4 font-medium">추후 안내</td>
+                <td class="py-3.5 px-4 font-bold flex items-center gap-1.5 text-amber-700 whitespace-nowrap"><span>🤝</span> 전도</td>
+                <td class="py-3.5 px-4 font-medium whitespace-nowrap">10/30(금) ~ 11/20(금)</td>
+                <td class="py-3.5 px-4 whitespace-nowrap"><span class="px-2 py-0.5 rounded bg-amber-100 text-amber-700 font-semibold text-xs">총 3주</span></td>
+                <td class="py-3.5 px-4 min-w-[200px]">추후 안내</td>
+                <td class="py-3.5 px-4 font-medium whitespace-nowrap">추후 안내</td>
               </tr>
               <tr class="bg-purple-50/70 font-semibold text-purple-950">
-                <td class="py-3.5 px-4 text-purple-900 flex items-center gap-1.5"><span>🎯</span> 최종 목표</td>
-                <td class="py-3.5 px-4">전체 기간 누적</td>
-                <td class="py-3.5 px-4">총 9주</td>
-                <td class="py-3.5 px-4">지구 전체 합산</td>
-                <td class="py-3.5 px-4 text-indigo-900 font-bold">합산 61송이 ➡️ <span class="text-purple-700 underline">디저트 파티</span></td>
+                <td class="py-3.5 px-4 text-purple-900 flex items-center gap-1.5 whitespace-nowrap"><span>🎯</span> 최종 목표</td>
+                <td class="py-3.5 px-4 whitespace-nowrap">전체 기간 누적</td>
+                <td class="py-3.5 px-4 whitespace-nowrap">총 9주</td>
+                <td class="py-3.5 px-4 min-w-[200px]">지구 전체 합산</td>
+                <td class="py-3.5 px-4 text-indigo-900 font-bold whitespace-nowrap">합산 61송이 ➡️ <span class="text-purple-700 underline">디저트 파티</span></td>
               </tr>
             </tbody>
           </table>
@@ -416,8 +457,8 @@
               <div class="flex items-center gap-2">
                 <span class="p-2 rounded-xl bg-indigo-50 text-indigo-600 text-lg">🙏</span>
                 <div>
-                  <h3 class="font-bold text-slate-900 text-lg">기도 인증 가이드</h3>
-                  <span class="text-xs text-indigo-600 font-medium">9/18(금) 부터 시작</span>
+                  <h3 class="font-bold text-slate-900 text-lg whitespace-nowrap">기도 인증 가이드</h3>
+                  <span class="text-xs text-indigo-600 font-medium whitespace-nowrap">9/18(금) 부터 시작</span>
                 </div>
               </div>
             </div>
@@ -425,19 +466,19 @@
             <div class="space-y-4 text-sm text-slate-600 mt-5">
               <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
                 <div class="font-bold text-slate-800 flex items-center gap-1.5 mb-1.5 text-xs sm:text-sm">
-                  <i data-lucide="camera" class="w-4 h-4 text-indigo-500"></i> 인증 사진 (완전 자유!)
+                  <i data-lucide="camera" class="w-4 h-4 text-indigo-500"></i> <span class="whitespace-nowrap">인증 사진 (완전 자유!)</span>
                 </div>
-                <ul class="text-xs text-slate-600 space-y-1 list-disc list-inside">
-                  <li>기도수첩을 원하는 배경에 찍어도 OK</li>
-                  <li>무릎 꿇고 기도한 장소 사진 OK</li>
-                  <li>기도하며 문득 떠오른 풍경/사물 OK</li>
-                  <li><span class="text-indigo-600 font-medium">형식 구애 없이 마음을 담으면 무엇이든 가능!</span></li>
+                <ul class="text-xs text-slate-600 space-y-2 list-disc list-inside">
+                  <li class="leading-relaxed">기도수첩을 원하는 배경에 찍어도 OK</li>
+                  <li class="leading-relaxed">무릎 꿇고 기도한 장소 사진 OK</li>
+                  <li class="leading-relaxed">기도하며 문득 떠오른 풍경/사물 OK</li>
+                  <li class="leading-relaxed text-indigo-600 font-medium">형식 구애 없이 마음을 담으면 무엇이든 가능!</li>
                 </ul>
               </div>
 
               <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100">
                 <div class="font-bold text-slate-800 flex items-center gap-1.5 mb-1.5 text-xs sm:text-sm">
-                  <i data-lucide="pen-tool" class="w-4 h-4 text-indigo-500"></i> 인증 글 (편하게 작성!)
+                  <i data-lucide="pen-tool" class="w-4 h-4 text-indigo-500"></i> <span class="whitespace-nowrap">인증 글 (편하게 작성!)</span>
                 </div>
                 <p class="text-xs text-slate-600 leading-relaxed">
                   "어디에서 기도했습니다", "오늘은 청년들을 위해 기도했습니다" 등 짧은 한 줄도 좋고 긴 묵상도 환영합니다.
@@ -445,21 +486,21 @@
               </div>
 
               <div class="p-3.5 rounded-2xl bg-indigo-50/60 border border-indigo-100">
-                <div class="font-bold text-indigo-900 text-xs sm:text-sm flex items-center gap-1 mb-1">
+                <div class="font-bold text-indigo-900 text-xs sm:text-sm flex items-center gap-1 mb-1 whitespace-nowrap">
                   <i data-lucide="tag" class="w-3.5 h-3.5 text-indigo-600"></i> 필수 카운팅 양식
                 </div>
-                <p class="text-xs text-slate-600 mb-2">
+                <p class="text-xs text-slate-600 mb-2 leading-relaxed">
                   인증글 맨 아래에 <strong>"O포도알 O포도송이"</strong> 형식으로 누적 개수를 적어주세요!
                 </p>
-                <div class="bg-white rounded-xl p-2.5 border border-indigo-200 text-xs font-mono text-indigo-950 flex flex-col gap-1">
+                <div class="bg-white rounded-xl p-2.5 border border-indigo-200 text-xs font-mono text-indigo-950 flex flex-col gap-1 whitespace-nowrap overflow-hidden text-ellipsis">
                   <span>예: [기도] 1포도알 0포도송이</span>
                 </div>
               </div>
             </div>
           </div>
           <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
-            <span>인증: 인왕지구 카톡방</span>
-            <span class="text-indigo-600 font-semibold">9/18 시작</span>
+            <span class="whitespace-nowrap">인증: 인왕지구 카톡방</span>
+            <span class="text-indigo-600 font-semibold whitespace-nowrap">9/18 시작</span>
           </div>
         </section>
 
@@ -470,37 +511,37 @@
               <div class="flex items-center gap-2">
                 <span class="p-2 rounded-xl bg-emerald-50 text-emerald-600 text-lg">📖</span>
                 <div>
-                  <h3 class="font-bold text-slate-900 text-lg">말씀 인증 가이드</h3>
-                  <span class="text-xs text-emerald-600 font-medium">10/9(금) 부터 시작</span>
+                  <h3 class="font-bold text-slate-900 text-lg whitespace-nowrap">말씀 인증 가이드</h3>
+                  <span class="text-xs text-emerald-600 font-medium whitespace-nowrap">10/9(금) 부터 시작</span>
                 </div>
               </div>
             </div>
 
             <div class="space-y-4 text-sm text-slate-600 mt-5">
               <div class="rounded-2xl border-2 border-dashed border-emerald-200 bg-emerald-50/40 p-6 text-center flex flex-col items-center justify-center min-h-[170px]">
-                <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mb-3">
+                <div class="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mb-3 shrink-0">
                   <i data-lucide="lock" class="w-5 h-5"></i>
                 </div>
-                <h4 class="font-bold text-slate-800 text-sm sm:text-base mb-1">인증 방식 공개 예정</h4>
-                <p class="text-xs sm:text-sm text-emerald-800 font-semibold bg-emerald-100 px-3 py-1 rounded-lg mt-1">
+                <h4 class="font-bold text-slate-800 text-sm sm:text-base mb-1 whitespace-nowrap">인증 방식 공개 예정</h4>
+                <p class="text-xs sm:text-sm text-emerald-800 font-semibold bg-emerald-100 px-3 py-1 rounded-lg mt-1 inline-block whitespace-nowrap">
                   📢 10/8 (목) 상세 공개!
                 </p>
                 <p class="text-xs text-slate-500 mt-3 leading-relaxed">
-                  말씀 인증은 4주차인 10/9(금)부터 시작되며,<br>하루 전인 <strong>10월 8일(목)</strong>에 상세 가이드가 안내됩니다.
+                  말씀 인증은 4주차인 10/9(금)부터 시작되며, 하루 전인 <strong class="whitespace-nowrap text-emerald-700">10월 8일(목)</strong>에 상세 가이드가 안내됩니다.
                 </p>
               </div>
 
               <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-100 text-xs text-slate-600">
-                <div class="font-bold text-slate-800 mb-1 flex items-center gap-1.5">
+                <div class="font-bold text-slate-800 mb-1 flex items-center gap-1.5 whitespace-nowrap">
                   <i data-lucide="sparkles" class="w-3.5 h-3.5 text-emerald-500"></i> 말씀 카운팅 양식
                 </div>
-                말씀 인증 또한 1회당 포도알 1개가 적립됩니다. "[말씀] O포도알 O포도송이" 양식을 붙여주세요.
+                <p class="leading-relaxed">말씀 인증 또한 1회당 포도알 1개가 적립됩니다. "[말씀] O포도알 O포도송이" 양식을 붙여주세요.</p>
               </div>
             </div>
           </div>
           <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
-            <span>방식 공개: 10/8(목)</span>
-            <span class="text-emerald-600 font-semibold">10/9 시작</span>
+            <span class="whitespace-nowrap">방식 공개: 10/8(목)</span>
+            <span class="text-emerald-600 font-semibold whitespace-nowrap">10/9 시작</span>
           </div>
         </section>
 
@@ -511,174 +552,304 @@
               <div class="flex items-center gap-2">
                 <span class="p-2 rounded-xl bg-amber-50 text-amber-600 text-lg">🤝</span>
                 <div>
-                  <h3 class="font-bold text-slate-900 text-lg">전도 인증 가이드</h3>
-                  <span class="text-xs text-amber-600 font-medium">10/30(금) 부터 시작</span>
+                  <h3 class="font-bold text-slate-900 text-lg whitespace-nowrap">전도 인증 가이드</h3>
+                  <span class="text-xs text-amber-600 font-medium whitespace-nowrap">10/30(금) 부터 시작</span>
                 </div>
               </div>
             </div>
 
             <div class="space-y-4 text-sm text-slate-600 mt-5">
               <div class="rounded-2xl border-2 border-dashed border-amber-200 bg-amber-50/40 p-6 text-center flex flex-col items-center justify-center min-h-[170px]">
-                <div class="w-12 h-12 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mb-3">
+                <div class="w-12 h-12 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mb-3 shrink-0">
                   <i data-lucide="lock" class="w-5 h-5"></i>
                 </div>
-                <h4 class="font-bold text-slate-800 text-sm sm:text-base mb-1">인증 여부 및 방식 공개 예정</h4>
-                <p class="text-xs sm:text-sm text-amber-800 font-semibold bg-amber-100 px-3 py-1 rounded-lg mt-1">
+                <h4 class="font-bold text-slate-800 text-sm sm:text-base mb-1 whitespace-nowrap">인증 여부 및 방식 공개 예정</h4>
+                <p class="text-xs sm:text-sm text-amber-800 font-semibold bg-amber-100 px-3 py-1 rounded-lg mt-1 inline-block whitespace-nowrap">
                   📢 10/29 (목) 상세 공개!
                 </p>
                 <p class="text-xs text-slate-500 mt-3 leading-relaxed">
-                  전도 인증은 7주차인 10/30(금)부터 시작되며,<br>진행 방식 및 인증 여부는 <strong>10월 29일(목)</strong>에 상세 안내됩니다.
+                  전도 인증은 7주차인 10/30(금)부터 시작되며, 진행 방식 및 인증 여부는 <strong class="whitespace-nowrap text-amber-700">10월 29일(목)</strong>에 상세 안내됩니다.
                 </p>
               </div>
             </div>
           </div>
           <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
-            <span>방식 공개: 10/29(목)</span>
-            <span class="text-amber-600 font-semibold">10/30 시작</span>
+            <span class="whitespace-nowrap">방식 공개: 10/29(목)</span>
+            <span class="text-amber-600 font-semibold whitespace-nowrap">10/30 시작</span>
           </div>
         </section>
       </div>
     </div>
 
     <!-- Footer -->
-    <div class="text-center pt-8 pb-8 text-slate-400 text-xs">
-      <p class="font-medium text-slate-500">인왕지구 포도원 챌린지 | 2026</p>
+    <div class="text-center pt-8 pb-4 text-slate-400 text-xs whitespace-nowrap">
+      <p class="font-medium text-slate-500 mb-1">인왕지구 포도원 프로젝트 | 2026</p>
+      <p class="text-slate-400 font-mono">ver 1.3.4 (실시간 DB 연동)</p>
     </div>
   </main>
 
   <script type="module">
-  // 1. Firebase 실시간 데이터베이스 모듈 불러오기
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
-  import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-database.js";
-
-  // 2. Firebase 콘솔에서 발급받은 본인의 설정값으로 반드시 덮어쓰세요!
- const firebaseConfig = {
-  apiKey: "AIzaSyA0_9N5QYB0V_wiwli93TCgm2yLDcqOFyM",
-  authDomain: "inwang-vineyard.firebaseapp.com",
-  databaseURL: "https://inwang-vineyard-default-rtdb.firebaseio.com",
-  projectId: "inwang-vineyard",
-  storageBucket: "inwang-vineyard.firebasestorage.app",
-  messagingSenderId: "765177822450",
-  appId: "1:765177822450:web:6b0f142c00f12901b9e46b"
-};
-
-  // Firebase 초기화
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
+    // 1. Firebase 모듈 불러오기
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+    import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-database.js";
   
-  // 데이터가 저장될 DB 경로 설정
-  const grapeRef = ref(db, 'inwang/grapes'); 
-
-  // 내부 상태 변수
-  let grapeState = { prayer: 0, word: 0 };
-
-  // 3. DB 실시간 수신 (데이터가 변경되면 즉시 모든 접속자의 화면에 렌더링)
-  onValue(grapeRef, (snapshot) => {
-    const data = snapshot.val();
-    if (data) {
-      grapeState = data;
-    } else {
-      // DB가 처음 비어있을 때 부여할 초기 수치
-      grapeState = { prayer: 45, word: 18 };
-    }
-    renderDashboard();
-  });
-
-  // ==========================================
-  // HTML 버튼 이벤트(onclick) 연결을 위한 window 객체 할당
-  // ==========================================
+    // 2. 전달해주신 진짜 Firebase 정보 입력 완료!
+    const firebaseConfig = {
+      apiKey: "AIzaSyA0_9N5QYB0V_wiwli93TCgm2yLDcqOFyM",
+      authDomain: "inwang-vineyard.firebaseapp.com",
+      databaseURL: "https://inwang-vineyard-default-rtdb.firebaseio.com",
+      projectId: "inwang-vineyard",
+      storageBucket: "inwang-vineyard.firebasestorage.app",
+      messagingSenderId: "765177822450",
+      appId: "1:765177822450:web:6b0f142c00f12901b9e46b"
+    };
   
-  window.switchView = function(viewId) {
-    document.getElementById('view-home').classList.add('hidden');
-    document.getElementById('view-info').classList.add('hidden');
-    document.getElementById('view-auth').classList.add('hidden');
-    document.getElementById(`view-${viewId}`).classList.remove('hidden');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  window.handleAdminClick = function() {
-    const pwd = prompt("관리자 모드입니다. 비밀번호를 입력하세요.");
-    if (pwd === "2026") { // 비밀번호
-      if(document.getElementById('view-home').classList.contains('hidden')) {
-        window.switchView('home');
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const grapeRef = ref(db, 'inwang/grapes'); 
+  
+    // UI 아이콘 초기화
+    lucide.createIcons();
+  
+    // 기본 상태값
+    let grapeState = { prayer: 45, word: 18 };
+    let lastUpdatedString = "최근 업데이트 없음";
+  
+    // 3. Firebase 실시간 수신 (모든 사람의 화면에 동물과 숫자를 동시에 그려줌)
+    onValue(grapeRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        if(data.prayer !== undefined) grapeState.prayer = data.prayer;
+        if(data.word !== undefined) grapeState.word = data.word;
+        if(data.lastUpdated) lastUpdatedString = data.lastUpdated;
       }
-      document.getElementById("admin-panel").classList.remove("hidden");
-    } else if (pwd !== null) {
-      alert("비밀번호가 틀렸습니다.");
-    }
-  };
-
-  window.closeAdminPanel = function() {
-    document.getElementById("admin-panel").classList.add("hidden");
-  };
-
-  // 플러스/마이너스 버튼 클릭 시 실시간 DB 업데이트
-  window.addGrape = function(type, amount) {
-    let newValue = grapeState[type] + amount;
-    if (newValue < 0) newValue = 0;
-    
-    // DB에 값을 덮어쓰면 onValue가 반응하여 전체 화면 자동 갱신
-    set(grapeRef, {
-      ...grapeState,
-      [type]: newValue
+      
+      // 시간 뱃지 업데이트
+      const timeBadge = document.getElementById('last-updated-time');
+      if(timeBadge) {
+        timeBadge.innerText = lastUpdatedString;
+      }
+      
+      renderDashboard();
     });
-  };
-
-  // 직접 입력 후 적용 버튼 클릭 시 실시간 DB 업데이트
-  window.setGrape = function(type) {
-    const inputEl = document.getElementById(`manual-${type}`);
-    const val = parseInt(inputEl.value, 10);
-    
-    if (!isNaN(val) && val >= 0) {
+  
+    // 현재 시간을 "YY.MM.DD HH:MM 기준" 포맷으로 만들어주는 함수
+    function getNowString() {
+      const now = new Date();
+      const yy = now.getFullYear().toString().slice(-2);
+      const mm = (now.getMonth() + 1).toString().padStart(2, '0');
+      const dd = now.getDate().toString().padStart(2, '0');
+      const hh = now.getHours().toString().padStart(2, '0');
+      const min = now.getMinutes().toString().padStart(2, '0');
+      return `${yy}.${mm}.${dd} ${hh}:${min} 기준`;
+    }
+  
+    // --- HTML 버튼 이벤트 연결 ---
+    window.switchView = function(viewId) {
+      document.getElementById('view-home').classList.add('hidden');
+      document.getElementById('view-info').classList.add('hidden');
+      document.getElementById('view-auth').classList.add('hidden');
+      document.getElementById(`view-${viewId}`).classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+  
+    window.handleAdminClick = function() {
+      const pwd = prompt("관리자 모드입니다. 비밀번호를 입력하세요.");
+      if (pwd === "2026") {
+        if(document.getElementById('view-home').classList.contains('hidden')) {
+          window.switchView('home');
+        }
+        document.getElementById("admin-panel").classList.remove("hidden");
+      } else if (pwd !== null) {
+        alert("비밀번호가 틀렸습니다.");
+      }
+    };
+  
+    window.closeAdminPanel = function() {
+      document.getElementById("admin-panel").classList.add("hidden");
+    };
+  
+    // --- DB 실시간 업데이트 로직 ---
+    window.addGrape = function(type, amount) {
+      let newValue = grapeState[type] + amount;
+      if (newValue < 0) newValue = 0;
+      
+      // 수치와 업데이트 시간을 함께 Firebase에 저장
       set(grapeRef, {
         ...grapeState,
-        [type]: val
+        [type]: newValue,
+        lastUpdated: getNowString()
       });
-      inputEl.value = '';
-    } else {
-      alert("올바른 숫자를 입력해주세요. (0 이상)");
-    }
-  };
-
-  // ==========================================
-  // 시각화 렌더링 로직 (기존 유지)
-  // ==========================================
+    };
   
-  function renderDashboard() {
-    const prayerBunches = Math.floor(grapeState.prayer / 20);
-    const prayerRemainder = grapeState.prayer % 20;
-    const wordBunches = Math.floor(grapeState.word / 20);
-    const wordRemainder = grapeState.word % 20;
+    window.setGrape = function(type) {
+      const inputEl = document.getElementById(`manual-${type}`);
+      const val = parseInt(inputEl.value, 10);
+      
+      if (!isNaN(val) && val >= 0) {
+        set(grapeRef, {
+          ...grapeState,
+          [type]: val,
+          lastUpdated: getNowString()
+        });
+        inputEl.value = '';
+      } else {
+        alert("올바른 숫자를 입력해주세요. (0 이상)");
+      }
+    };
+  
+    // --- 디데이 계산기 ---
+    function updateDDay() {
+      const endDate = new Date('2026-11-20T23:59:59');
+      const today = new Date();
+      const diffTime = endDate - today;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      
+      const ddayCounter = document.getElementById('d-day-counter');
+      if(ddayCounter) {
+        if(diffDays > 0) {
+          ddayCounter.innerText = `D-${diffDays}`;
+        } else if (diffDays === 0) {
+          ddayCounter.innerText = 'D-Day';
+          ddayCounter.classList.add('bg-red-500', 'text-white');
+        } else {
+          ddayCounter.innerText = '종료됨';
+          ddayCounter.classList.add('bg-slate-500', 'text-white');
+        }
+      }
+    }
+  
+    // --- 화면 렌더링 ---
+    function renderDashboard() {
+      const prayerBunches = Math.floor(grapeState.prayer / 20);
+      const wordBunches = Math.floor(grapeState.word / 20);
+      
+      document.getElementById('dash-prayer-seeds').innerText = grapeState.prayer;
+      document.getElementById('dash-prayer-bunches').innerText = prayerBunches;
+      document.getElementById('dash-word-seeds').innerText = grapeState.word;
+      document.getElementById('dash-word-bunches').innerText = wordBunches;
+      document.getElementById('dash-total-bunches').innerText = (prayerBunches + wordBunches);
+  
+      drawDetailedVineyard('prayer', prayerBunches);
+      drawDetailedVineyard('word', wordBunches);
+    }
+  
+    // --- 귀여운 동물과 포도원을 그리는 함수 ---
+    function drawDetailedVineyard(type, bunches) {
+      const bgContainer = document.getElementById(`tree-${type}-bg`);
+      const fgContainer = document.getElementById(`tree-${type}-container`);
+      
+      bgContainer.innerHTML = '';
+      fgContainer.innerHTML = '';
+  
+      const isPrayer = type === 'prayer';
+      
+      const skyGradient = isPrayer ? ['#e0f2fe', '#bae6fd'] : ['#ecfdf5', '#d1fae5'];
+      const hillBack = isPrayer ? '#dcfce7' : '#ccfbf1';
+      const hillFront = isPrayer ? '#bbf7d0' : '#a7f3d0';
+      const darkLeaf = isPrayer ? '#144225' : '#04382a'; 
+      const midLeaf = isPrayer ? '#16572e' : '#045e45';  
+      const lightLeaf = isPrayer ? '#1da750' : '#0e9e6e';
+  
+      let svg = `
+        <svg viewBox="0 0 100 100" class="w-full h-full opacity-90" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="sky-${type}" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="${skyGradient[0]}"/>
+              <stop offset="100%" stop-color="${skyGradient[1]}"/>
+            </linearGradient>
+          </defs>
+          <rect width="100" height="100" fill="url(#sky-${type})"/>
+          <path d="M0,45 Q25,35 50,45 T100,40 L100,100 L0,100 Z" fill="${hillBack}"/>
+          <path d="M0,55 Q30,45 60,55 T100,50 L100,100 L0,100 Z" fill="${hillFront}"/>
+      `;
+  
+      const rows = [
+        { y: 30, scale: 0.6 },
+        { y: 60, scale: 0.9 },
+        { y: 90, scale: 1.2 }
+      ];
+  
+      rows.forEach(row => {
+        svg += `<ellipse cx="50" cy="${row.y + row.scale * 6}" rx="60" ry="${row.scale * 4}" fill="rgba(107, 68, 35, 0.15)"/>`;
+        for (let x = 5; x <= 95; x += 18) {
+          svg += `<rect x="${x}" y="${row.y - row.scale * 12}" width="${row.scale * 2}" height="${row.scale * 22}" fill="#5d4037" rx="${row.scale * 0.5}"/>`;
+        }
+        svg += `<line x1="0" y1="${row.y - row.scale * 3}" x2="100" y2="${row.y - row.scale * 3}" stroke="#9e9e9e" stroke-width="${row.scale * 0.5}"/>`;
+        let pathDark = "", pathMid = "";
+        for (let x = -5; x <= 105; x += 4) {
+          let dy = (Math.random() - 0.5) * 8 * row.scale;
+          let r = (2 + Math.random() * 3) * row.scale;
+          pathDark += ` M ${x} ${row.y + dy} a ${r} ${r} 0 1 0 0.1 0`;
+        }
+        for (let x = -2; x <= 102; x += 3) {
+          let dy = (Math.random() - 0.5) * 6 * row.scale;
+          let r = (1.5 + Math.random() * 2.5) * row.scale;
+          pathMid += ` M ${x} ${row.y + dy} a ${r} ${r} 0 1 0 0.1 0`;
+        }
+        svg += `<path d="${pathDark}" stroke="${darkLeaf}" stroke-width="${row.scale * 4}" stroke-linecap="round" fill="none" opacity="0.95"/>`;
+        svg += `<path d="${pathMid}" stroke="${midLeaf}" stroke-width="${row.scale * 3}" stroke-linecap="round" fill="none"/>`;
+        for(let x = 0; x <= 100; x += 6) {
+          let dy = (Math.random() - 0.5) * 5 * row.scale;
+          svg += `<circle cx="${x}" cy="${row.y + dy}" r="${row.scale * 1.5}" fill="${lightLeaf}"/>`;
+        }
+      });
+      svg += `</svg>`;
+      bgContainer.innerHTML = svg;
+  
+      const groundChars = ['🐇', '🐿️', '🦆', '🐢', '🐌', '🌻', '🌼', '🐕', '🐑'];
+      const flyingChars = ['🦋', '🐞', '🐝', '🕊️'];
+  
+      const groundCount = Math.floor(Math.random() * 2) + 2; 
+      for(let i = 0; i < groundCount; i++) {
+        const char = groundChars[Math.floor(Math.random() * groundChars.length)];
+        const charEl = document.createElement('div');
+        charEl.className = 'absolute text-[22px] sm:text-[28px] drop-shadow-md animate-hop';
+        charEl.style.left = `${10 + Math.random() * 80}%`; 
+        charEl.style.bottom = `${2 + Math.random() * 8}%`; 
+        charEl.style.animationDuration = `${1.5 + Math.random()}s`;
+        charEl.style.animationDelay = `${Math.random()}s`;
+        charEl.innerText = char;
+        fgContainer.appendChild(charEl);
+      }
+  
+      const flyingCount = Math.floor(Math.random() * 2) + 1; 
+      for(let i = 0; i < flyingCount; i++) {
+        const char = flyingChars[Math.floor(Math.random() * flyingChars.length)];
+        const charEl = document.createElement('div');
+        charEl.className = 'absolute text-xl sm:text-2xl drop-shadow-sm animate-float';
+        charEl.style.left = `${15 + Math.random() * 70}%`; 
+        charEl.style.top = `${10 + Math.random() * 40}%`; 
+        charEl.style.animationDuration = `${2.5 + Math.random() * 2}s`;
+        charEl.style.animationDelay = `${Math.random() * 2}s`;
+        charEl.innerText = char;
+        fgContainer.appendChild(charEl);
+      }
+  
+      const vineRowsY = [30, 60, 90];
+      
+      for (let i = 0; i < bunches; i++) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'absolute transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto z-20';
+        
+        const exactRowY = vineRowsY[Math.floor(Math.random() * vineRowsY.length)];
+        const leftPercent = 10 + Math.random() * 80; 
+        
+        wrapper.style.top = `${exactRowY}%`;
+        wrapper.style.left = `${leftPercent}%`;
+  
+        const bunchEl = document.createElement('div');
+        bunchEl.className = 'text-[36px] sm:text-[44px] filter drop-shadow-[0_0_8px_rgba(255,255,255,0.9)] pop-in hover:scale-125 transition-transform cursor-default';
+        bunchEl.style.animationDelay = `${i * 0.05}s`;
+        bunchEl.innerText = '🍇';
+  
+        wrapper.appendChild(bunchEl);
+        fgContainer.appendChild(wrapper);
+      }
+    }
     
-    document.getElementById('dash-prayer-seeds').innerText = grapeState.prayer;
-    document.getElementById('dash-prayer-bunches').innerText = prayerBunches;
-    document.getElementById('dash-word-seeds').innerText = grapeState.word;
-    document.getElementById('dash-word-bunches').innerText = wordBunches;
-    document.getElementById('dash-total-bunches').innerText = (prayerBunches + wordBunches);
-
-    drawTree('prayer', prayerBunches, prayerRemainder, 'bg-indigo-500');
-    drawTree('word', wordBunches, wordRemainder, 'bg-emerald-500');
-  }
-
-  function drawTree(type, bunches, remainder, seedBgColor) {
-    const container = document.getElementById(`tree-${type}-container`);
-    container.innerHTML = '';
-    for (let i = 0; i < bunches; i++) {
-      const bunchEl = document.createElement('div');
-      bunchEl.className = 'text-4xl filter drop-shadow-md pop-in';
-      bunchEl.style.animationDelay = `${i * 0.05}s`;
-      bunchEl.innerText = '🍇';
-      container.appendChild(bunchEl);
-    }
-    for (let i = 0; i < remainder; i++) {
-      const seedEl = document.createElement('div');
-      seedEl.className = `w-5 h-5 rounded-full ${seedBgColor} shadow-md pop-in border-2 border-white/50`;
-      seedEl.style.animationDelay = `${(bunches * 0.05) + (i * 0.03)}s`;
-      container.appendChild(seedEl);
-    }
-  }
-
-  lucide.createIcons();
-</script>
+    // 페이지 로드 시 디데이 1회 실행
+    updateDDay(); 
+  </script>
 </body>
 </html>
