@@ -336,15 +336,9 @@
             <p class="text-xs text-slate-600 leading-relaxed">기도/말씀 1회 인증 시 포도알 1개 적립</p>
           </div>
 
-          <!-- 바구니 없애고 포도알 5송이만 풍성하게 겹치게 디자인 변경 -->
+          <!-- 복잡한 포도송이 대신 깔끔하고 귀여운 나무 이모지 1개로 변경 -->
           <div class="bg-slate-50 rounded-2xl p-5 border border-slate-100 flex flex-col items-start">
-            <div class="relative w-16 h-14 mb-3 flex items-center justify-center">
-              <span class="absolute bottom-1 left-0 text-[26px] z-10 -rotate-12 drop-shadow-sm">🍇</span>
-              <span class="absolute bottom-1 right-0 text-[26px] z-10 rotate-12 drop-shadow-sm">🍇</span>
-              <span class="absolute bottom-4 left-3 text-[28px] z-20 drop-shadow-md">🍇</span>
-              <span class="absolute bottom-4 right-3 text-[28px] z-20 rotate-6 drop-shadow-md">🍇</span>
-              <span class="absolute bottom-8 left-4 text-[30px] z-30 drop-shadow-lg">🍇</span>
-            </div>
+            <div class="text-[32px] mb-2 drop-shadow-sm">🌳</div>
             <h3 class="font-bold text-base text-slate-800 mb-1 whitespace-nowrap">20알 = 포도 1송이</h3>
             <p class="text-xs text-slate-600 leading-relaxed">20개가 모이면 포도 1송이 완성 (마 20:1)</p>
           </div>
@@ -619,7 +613,7 @@
     <!-- Footer -->
     <div class="text-center pt-8 pb-4 text-slate-400 text-xs whitespace-nowrap">
       <p class="font-medium text-slate-500 mb-1">인왕지구 포도원 프로젝트 | 2026</p>
-      <p class="text-slate-400 font-mono">ver 1.5.0</p>
+      <p class="text-slate-400 font-mono">ver 1.5.1</p>
     </div>
   </main>
 
@@ -659,14 +653,12 @@
       renderDashboard();
     });
 
-    // --- Firebase 방문자 통계 변수 및 리스너 ---
     let visitorData = { total: 0, daily: {} };
     let chartInstance = null;
 
     onValue(ref(db, 'inwang/stats/visitors'), (snapshot) => {
       const data = snapshot.val();
       if(data) visitorData = data;
-      // 관리자 패널이 열려있다면 즉시 차트 갱신
       if(!document.getElementById("admin-panel").classList.contains("hidden")) {
         renderVisitorChart();
       }
@@ -682,7 +674,6 @@
       return `${y}-${m}-${d}`; 
     }
 
-    // 초기 접속 시 조회수 증가 트래킹 (세션 스토리지 활용)
     setTimeout(() => {
       if(!sessionStorage.getItem('inwang_visited')) {
         sessionStorage.setItem('inwang_visited', 'true');
@@ -713,7 +704,6 @@
       return 'prayer';
     }
 
-    // --- 배너 텍스트 '훈련' 삭제 및 버튼 기능 반영 ---
     function updatePeriodBanner() {
       const period = getCurrentPeriod();
       const banner = document.getElementById('current-period-banner');
@@ -780,7 +770,6 @@
       if(tabId === 'evangelism') activeBtn.className = "flex-1 min-w-[100px] py-2.5 rounded-xl bg-amber-500 text-white font-bold text-sm transition text-center flex items-center justify-center gap-1.5 whitespace-nowrap shadow-sm";
     };
   
-    // --- 관리자 모드 및 차트 렌더링 ---
     window.handleAdminClick = function() {
       const pwd = prompt("관리자 모드입니다. 비밀번호를 입력하세요.");
       if (pwd === "2026") {
@@ -788,7 +777,6 @@
           window.switchView('home');
         }
         document.getElementById("admin-panel").classList.remove("hidden");
-        // 패널을 열 때 차트를 한 번 그려줌
         setTimeout(() => renderVisitorChart(), 100); 
       } else if (pwd !== null) {
         alert("비밀번호가 틀렸습니다.");
@@ -802,11 +790,10 @@
       const ctx = document.getElementById('visitorChart').getContext('2d');
       const daily = visitorData.daily || {};
       
-      // 최근 7일 데이터 필터링
       const sortedDates = Object.keys(daily).sort();
       const recentDates = sortedDates.slice(-7);
       
-      const labels = recentDates.map(d => d.substring(5)); // YYYY-MM-DD -> MM-DD
+      const labels = recentDates.map(d => d.substring(5)); 
       const dataPts = recentDates.map(d => daily[d]);
 
       if(chartInstance) {
@@ -838,7 +825,6 @@
       });
     }
 
-    // --- 수동 수치 조작 ---
     window.addGrape = function(type, amount) {
       let newValue = grapeState[type] + amount;
       if (newValue < 0) newValue = 0;
@@ -962,7 +948,6 @@
       }
     }
 
-    // --- 가시성을 극대화한 실시간 날씨 렌더링 로직 ---
     async function fetchWeather() {
       try {
         const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=37.5665&longitude=126.9780&current=weather_code&timezone=Asia%2FSeoul');
