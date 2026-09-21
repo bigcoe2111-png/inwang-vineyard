@@ -165,32 +165,40 @@
            <!-- JS에서 기간에 맞춰 동적으로 채워짐 -->
         </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-8 text-center">
-          <div class="p-4 rounded-2xl bg-indigo-50/80 border border-indigo-100 shadow-sm">
-            <div class="text-xs font-bold text-indigo-500 mb-1 whitespace-nowrap">기도 포도알</div>
-            <div class="text-3xl font-black text-indigo-700" id="dash-prayer-seeds">0</div>
-          </div>
-          <div class="p-4 rounded-2xl bg-indigo-100/80 border border-indigo-200 shadow-sm">
-            <div class="text-xs font-bold text-indigo-600 mb-1 whitespace-nowrap">기도 포도송이</div>
-            <div class="flex items-baseline justify-center gap-1">
-              <span class="text-3xl font-black text-indigo-900" id="dash-prayer-bunches">0</span><span class="text-sm font-semibold text-indigo-600">송이</span>
+        <!-- 깔끔하게 통합된 3열 UI 그리드 -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 text-center">
+          
+          <!-- 기도 수확량 카드 -->
+          <div class="p-5 rounded-2xl bg-indigo-50/80 border border-indigo-200 shadow-sm flex flex-col items-center justify-center relative overflow-hidden">
+            <div class="absolute -right-3 -top-3 text-5xl opacity-10">🙏</div>
+            <div class="text-xs font-bold text-indigo-500 mb-2 whitespace-nowrap relative z-10">기도 수확량</div>
+            <div class="flex items-baseline justify-center gap-1.5 mb-1.5 relative z-10">
+              <span class="text-3xl font-black text-indigo-900" id="dash-prayer-bunches">0</span>
+              <span class="text-sm font-bold text-indigo-600">송이</span>
+              <span class="text-3xl font-black text-indigo-900 ml-2" id="dash-prayer-remains">0</span>
+              <span class="text-sm font-bold text-indigo-600">알</span>
             </div>
+            <div class="text-[11px] font-semibold text-indigo-400/80 relative z-10">(총 누적 <span id="dash-prayer-total">0</span>알)</div>
           </div>
           
-          <div class="p-4 rounded-2xl bg-emerald-50/80 border border-emerald-100 shadow-sm">
-            <div class="text-xs font-bold text-emerald-500 mb-1 whitespace-nowrap">말씀 포도알</div>
-            <div class="text-3xl font-black text-emerald-700" id="dash-word-seeds">0</div>
-          </div>
-          <div class="p-4 rounded-2xl bg-emerald-100/80 border border-emerald-200 shadow-sm">
-            <div class="text-xs font-bold text-emerald-600 mb-1 whitespace-nowrap">말씀 포도송이</div>
-            <div class="flex items-baseline justify-center gap-1">
-              <span class="text-3xl font-black text-emerald-900" id="dash-word-bunches">0</span><span class="text-sm font-semibold text-emerald-600">송이</span>
+          <!-- 말씀 수확량 카드 -->
+          <div class="p-5 rounded-2xl bg-emerald-50/80 border border-emerald-200 shadow-sm flex flex-col items-center justify-center relative overflow-hidden">
+            <div class="absolute -right-3 -top-3 text-5xl opacity-10">📖</div>
+            <div class="text-xs font-bold text-emerald-500 mb-2 whitespace-nowrap relative z-10">말씀 수확량</div>
+            <div class="flex items-baseline justify-center gap-1.5 mb-1.5 relative z-10">
+              <span class="text-3xl font-black text-emerald-900" id="dash-word-bunches">0</span>
+              <span class="text-sm font-bold text-emerald-600">송이</span>
+              <span class="text-3xl font-black text-emerald-900 ml-2" id="dash-word-remains">0</span>
+              <span class="text-sm font-bold text-emerald-600">알</span>
             </div>
+            <div class="text-[11px] font-semibold text-emerald-400/80 relative z-10">(총 누적 <span id="dash-word-total">0</span>알)</div>
           </div>
 
-          <div class="p-4 rounded-2xl bg-gradient-to-br from-purple-100/90 to-fuchsia-100/90 border border-purple-200 shadow-sm col-span-2 md:col-span-1 flex flex-col justify-center">
-            <div class="text-xs font-bold text-purple-700 mb-1 whitespace-nowrap">전체 합계</div>
-            <div class="flex items-baseline justify-center gap-1">
+          <!-- 전체 합계 카드 -->
+          <div class="p-5 rounded-2xl bg-gradient-to-br from-purple-100/90 to-fuchsia-100/90 border border-purple-200 shadow-sm flex flex-col items-center justify-center relative overflow-hidden">
+            <div class="absolute -right-3 -top-3 text-5xl opacity-10">🎯</div>
+            <div class="text-xs font-bold text-purple-700 mb-2 whitespace-nowrap relative z-10">전체 포도송이 합계</div>
+            <div class="flex items-baseline justify-center gap-1 relative z-10">
               <span class="text-4xl font-black text-purple-900" id="dash-total-bunches">0</span>
               <span class="text-sm font-bold text-purple-700">/ 61송이</span>
             </div>
@@ -231,7 +239,7 @@
           
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="bg-white p-3 rounded-xl border border-red-100 shadow-sm flex flex-col gap-3">
-              <div class="font-bold text-indigo-700 text-sm flex items-center gap-1"><span>🙏</span> 기도 포도알 수정</div>
+              <div class="font-bold text-indigo-700 text-sm flex items-center gap-1"><span>🙏</span> 기도 누적(총)알 수정</div>
               <div class="flex items-center gap-2">
                 <button onclick="addGrape('prayer', -1)" class="w-10 h-9 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg">-</button>
                 <button onclick="addGrape('prayer', 1)" class="w-10 h-9 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 font-bold rounded-lg">+</button>
@@ -244,7 +252,7 @@
             </div>
 
             <div class="bg-white p-3 rounded-xl border border-red-100 shadow-sm flex flex-col gap-3">
-              <div class="font-bold text-emerald-700 text-sm flex items-center gap-1"><span>📖</span> 말씀 포도알 수정</div>
+              <div class="font-bold text-emerald-700 text-sm flex items-center gap-1"><span>📖</span> 말씀 누적(총)알 수정</div>
               <div class="flex items-center gap-2">
                 <button onclick="addGrape('word', -1)" class="w-10 h-9 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg">-</button>
                 <button onclick="addGrape('word', 1)" class="w-10 h-9 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 font-bold rounded-lg">+</button>
@@ -261,7 +269,7 @@
                 <div class="flex items-center justify-between mb-3">
                   <div class="font-bold text-slate-800 text-sm flex items-center gap-1"><span>📈</span> 방문자 통계 (관리자 전용)</div>
                   <div class="text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1.5 rounded-md border border-slate-200">
-                    총 누적 방문수: <span id="admin-total-visitors" class="text-indigo-600 font-black text-sm">0</span>회
+                    총 누적 방문자: <span id="admin-total-visitors" class="text-indigo-600 font-black text-sm">0</span>명
                   </div>
                 </div>
                 <!-- 캔버스 높이 확보 -->
@@ -534,14 +542,13 @@
 
           <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
             <div class="font-bold text-slate-800 flex items-center gap-1.5 mb-2 text-sm">
-              <i data-lucide="pen-tool" class="w-4 h-4 text-indigo-500"></i> 인증 글(자유롭게!)
+              <i data-lucide="pen-tool" class="w-4 h-4 text-indigo-500"></i> 인증 글 (하루 1회 작성!)
             </div>
             <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              "강의실에서 기도했습니다", "영혼들을 위해 기도했습니다", "받은 은혜를 생각하며 기도했습니다" 등 짧은 한 줄 혹은 묵상 모두 좋습니다. <strong class="text-indigo-700">(하루 1회 인증) </strong>
+              "어디에서 기도했습니다", "오늘은 청년들을 위해 기도했습니다" 등 짧은 한 줄도 좋고 긴 묵상도 환영합니다. <strong class="text-indigo-700">단, 인증글은 하루에 1회만 인정됩니다.</strong>
             </p>
           </div>
 
-          <!-- 수정된 카운팅 양식 영역 -->
           <div class="p-4 rounded-2xl bg-indigo-50/60 border border-indigo-100">
             <div class="font-bold text-indigo-900 text-sm flex items-center gap-1 mb-2">
               <i data-lucide="tag" class="w-4 h-4 text-indigo-600"></i> 필수 카운팅 양식
@@ -550,7 +557,7 @@
               인증글 맨 아래에 <strong>"O송이 O포도알"</strong> 형식으로 누적 개수를 적어주세요!
             </p>
             <div class="bg-white rounded-xl p-3 border border-indigo-200 text-xs sm:text-sm font-mono text-indigo-950 font-bold mb-3">
-              예: [🙏기도] 1송이 1포도알
+              예: [🙏기도] 1송이 16포도알
             </div>
             
             <div class="flex items-start gap-1.5 mt-2 bg-indigo-100/50 p-3 rounded-xl border border-indigo-100">
@@ -621,7 +628,7 @@
     <!-- Footer -->
     <div class="text-center pt-8 pb-4 text-slate-400 text-xs whitespace-nowrap">
       <p class="font-medium text-slate-500 mb-1">인왕지구 포도원 프로젝트 | 2026</p>
-      <p class="text-slate-400 font-mono">ver 1.5.2</p>
+      <p class="text-slate-400 font-mono">ver 1.6.0</p>
     </div>
   </main>
 
@@ -865,12 +872,18 @@
   
     function renderDashboard() {
       const prayerBunches = Math.floor(grapeState.prayer / 20);
+      const prayerRemains = grapeState.prayer % 20;
       const wordBunches = Math.floor(grapeState.word / 20);
+      const wordRemains = grapeState.word % 20;
       
-      document.getElementById('dash-prayer-seeds').innerText = grapeState.prayer;
       document.getElementById('dash-prayer-bunches').innerText = prayerBunches;
-      document.getElementById('dash-word-seeds').innerText = grapeState.word;
+      document.getElementById('dash-prayer-remains').innerText = prayerRemains;
+      document.getElementById('dash-prayer-total').innerText = grapeState.prayer;
+
       document.getElementById('dash-word-bunches').innerText = wordBunches;
+      document.getElementById('dash-word-remains').innerText = wordRemains;
+      document.getElementById('dash-word-total').innerText = grapeState.word;
+      
       document.getElementById('dash-total-bunches').innerText = (prayerBunches + wordBunches);
   
       drawDetailedVineyard('prayer', prayerBunches);
@@ -942,17 +955,32 @@
       }
   
       const vineRowsY = [30, 60, 90];
+      
+      // 고정 좌표 로직 적용: 최대 65개까지 겹치지 않고 정해진 위치에 배치
       for (let i = 0; i < bunches; i++) {
         const wrapper = document.createElement('div');
         wrapper.className = 'absolute transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto z-20';
-        wrapper.style.top = `${vineRowsY[Math.floor(Math.random() * vineRowsY.length)]}%`;
-        wrapper.style.left = `${10 + Math.random() * 80}%`;
+        
+        // 인덱스를 기준으로 열(가로)과 행(세로)을 계산하여 고정된 위치 생성
+        const rowIdx = i % 3;
+        const colIdx = Math.floor(i / 3);
+        
+        // 각 줄마다 y축 위치를 미세하게 흔들어 자연스럽게 배치
+        const top = vineRowsY[rowIdx] + (colIdx % 2 === 0 ? -2 : 2);
+        // 가로축은 일정 간격(3.8%)으로 배치하여 겹치지 않게 조절
+        const left = 12 + (colIdx * 3.8);
+        
+        wrapper.style.top = `${top}%`;
+        // left 값이 90을 넘지 않도록 제한
+        wrapper.style.left = `${Math.min(left, 90)}%`;
   
         const bunchEl = document.createElement('div');
         bunchEl.className = 'text-[36px] sm:text-[44px] filter drop-shadow-[0_0_8px_rgba(255,255,255,0.9)] pop-in hover:scale-125 transition-transform cursor-default';
-        bunchEl.style.animationDelay = `${i * 0.05}s`;
+        bunchEl.style.animationDelay = `${(i % 10) * 0.05}s`;
         bunchEl.innerText = '🍇';
-        wrapper.appendChild(bunchEl); fgContainer.appendChild(wrapper);
+        
+        wrapper.appendChild(bunchEl); 
+        fgContainer.appendChild(wrapper);
       }
     }
 
