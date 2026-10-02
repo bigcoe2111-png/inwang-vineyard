@@ -176,7 +176,7 @@
               <span class="text-3xl font-black text-indigo-900" id="dash-prayer-bunches">0</span>
               <span class="text-sm font-bold text-indigo-600">송이</span>
               <span class="text-3xl font-black text-indigo-900 ml-2" id="dash-prayer-remains">0</span>
-              <span class="text-sm font-bold text-indigo-600">포도알</span>
+              <span class="text-sm font-bold text-indigo-600">알</span>
             </div>
             <div class="text-[11px] font-semibold text-indigo-400/80 relative z-10">(총 누적 <span id="dash-prayer-total">0</span>알)</div>
           </div>
@@ -189,7 +189,7 @@
               <span class="text-3xl font-black text-emerald-900" id="dash-word-bunches">0</span>
               <span class="text-sm font-bold text-emerald-600">송이</span>
               <span class="text-3xl font-black text-emerald-900 ml-2" id="dash-word-remains">0</span>
-              <span class="text-sm font-bold text-emerald-600">포도알</span>
+              <span class="text-sm font-bold text-emerald-600">알</span>
             </div>
             <div class="text-[11px] font-semibold text-emerald-400/80 relative z-10">(총 누적 <span id="dash-word-total">0</span>알)</div>
           </div>
@@ -542,10 +542,10 @@
 
           <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
             <div class="font-bold text-slate-800 flex items-center gap-1.5 mb-2 text-sm">
-              <i data-lucide="pen-tool" class="w-4 h-4 text-indigo-500"></i> 인증 글
+              <i data-lucide="pen-tool" class="w-4 h-4 text-indigo-500"></i> 인증 글 (하루 1회 작성!)
             </div>
             <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              "어디에서 기도했습니다", "오늘은 청년들을 위해 기도했습니다" 등 짧은 한 줄도 좋고 긴 묵상도 환영합니다. <strong class="text-indigo-700">(인증 횟수와 시간은 자유롭게).</strong>
+              "어디에서 기도했습니다", "오늘은 청년들을 위해 기도했습니다" 등 짧은 한 줄도 좋고 긴 묵상도 환영합니다. <strong class="text-indigo-700">단, 인증글은 하루에 1회만 인정됩니다.</strong>
             </p>
           </div>
 
@@ -628,7 +628,7 @@
     <!-- Footer -->
     <div class="text-center pt-8 pb-4 text-slate-400 text-xs whitespace-nowrap">
       <p class="font-medium text-slate-500 mb-1">인왕지구 포도원 프로젝트 | 2026</p>
-      <p class="text-slate-400 font-mono">ver 1.6.0</p>
+      <p class="text-slate-400 font-mono">ver 1.6.1</p>
     </div>
   </main>
 
@@ -955,25 +955,24 @@
       }
   
       const vineRowsY = [30, 60, 90];
+      const maxCols = 10; // 가로로 먼저 퍼질 최대 열의 개수
       
-      // 고정 좌표 로직 적용: 최대 65개까지 겹치지 않고 정해진 위치에 배치
       for (let i = 0; i < bunches; i++) {
         const wrapper = document.createElement('div');
-        wrapper.className = 'absolute transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto z-20';
+        wrapper.className = 'absolute transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto';
         
-        // 인덱스를 기준으로 열(가로)과 행(세로)을 계산하여 고정된 위치 생성
-        const rowIdx = i % 3;
-        const colIdx = Math.floor(i / 3);
+        const rowIdx = i % 3; // 0, 1, 2 (나무 3줄)
+        const colIdx = Math.floor(i / 3) % maxCols; // 가로 위치
+        const layerIdx = Math.floor(i / (3 * maxCols)); // 가로가 다 차면 겹쳐지도록 레이어 층수 증가
         
-        // 각 줄마다 y축 위치를 미세하게 흔들어 자연스럽게 배치
-        const top = vineRowsY[rowIdx] + (colIdx % 2 === 0 ? -2 : 2);
-        // 가로축은 일정 간격(3.8%)으로 배치하여 겹치지 않게 조절
-        const left = 12 + (colIdx * 3.8);
+        // 레이어가 높아질수록 살짝 아래로(layerIdx*4), 오른쪽으로(layerIdx*2.5) 이동하여 겹침
+        let top = vineRowsY[rowIdx] + (colIdx % 2 === 0 ? -2 : 2) + (layerIdx * 4);
+        let left = 10 + (colIdx * (80 / (maxCols - 1))) + (layerIdx * 2.5);
         
         wrapper.style.top = `${top}%`;
-        // left 값이 90을 넘지 않도록 제한
-        wrapper.style.left = `${Math.min(left, 90)}%`;
-  
+        wrapper.style.left = `${Math.min(left, 95)}%`; // 화면 밖으로 나가지 않도록 제한
+        wrapper.style.zIndex = 20 + layerIdx; // 나중에 생긴 포도가 앞에 보이도록 z-index 조절
+
         const bunchEl = document.createElement('div');
         bunchEl.className = 'text-[36px] sm:text-[44px] filter drop-shadow-[0_0_8px_rgba(255,255,255,0.9)] pop-in hover:scale-125 transition-transform cursor-default';
         bunchEl.style.animationDelay = `${(i % 10) * 0.05}s`;
