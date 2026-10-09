@@ -110,7 +110,7 @@
       animation: cloudMove linear infinite;
     }
 
-    /* 작은 여우 모드 어슬렁 애니메이션 (느리고 부드럽게) */
+    /* 작은 여우 모드 어슬렁 애니메이션 */
     @keyframes foxSneak {
       0% { left: -10%; transform: scaleX(1) translateY(0); }
       25% { transform: scaleX(1) translateY(-3px); }
@@ -122,7 +122,7 @@
     }
     .fox-character {
       position: absolute;
-      font-size: 26px; /* 사이즈를 줄여서 덜 부담스럽게 */
+      font-size: 26px;
       z-index: 40;
       animation: foxSneak linear infinite;
       filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
@@ -193,68 +193,46 @@
           </div>
         </div>
 
-        <!-- 기간별 하이라이트 배너 (클릭 시 가이드 이동) -->
+        <!-- 기간별 하이라이트 배너 -->
         <div id="current-period-banner" class="mb-6 hidden" onclick="switchView('auth')">
-           <!-- JS에서 동적 렌더링 -->
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 text-center">
-          <!-- 기도 카드 -->
-          <div class="p-5 rounded-2xl bg-indigo-50/80 border border-indigo-200 shadow-sm flex flex-col items-center justify-center relative overflow-hidden">
-            <div class="absolute -right-3 -top-3 text-5xl opacity-10">🙏</div>
-            <div class="text-xs font-bold text-indigo-500 mb-2 whitespace-nowrap relative z-10">기도 수확량</div>
-            <div class="flex items-baseline justify-center gap-1.5 mb-1.5 relative z-10">
-              <span class="text-3xl font-black text-indigo-900" id="dash-prayer-bunches">0</span>
-              <span class="text-sm font-bold text-indigo-600">송이</span>
-              <span class="text-3xl font-black text-indigo-900 ml-2" id="dash-prayer-remains">0</span>
-              <span class="text-sm font-bold text-indigo-600">알</span>
-            </div>
-            <div class="text-[11px] font-semibold text-indigo-400/80 relative z-10">(총 누적 <span id="dash-prayer-total">0</span>알)</div>
-          </div>
+        <!-- [수정] 통합된 2열 UI 그리드 (기도+말씀 수확량 / 전체 합계) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 text-center">
           
-          <!-- 말씀 카드 -->
-          <div class="p-5 rounded-2xl bg-emerald-50/80 border border-emerald-200 shadow-sm flex flex-col items-center justify-center relative overflow-hidden">
-            <div class="absolute -right-3 -top-3 text-5xl opacity-10">📖</div>
-            <div class="text-xs font-bold text-emerald-500 mb-2 whitespace-nowrap relative z-10">말씀 수확량</div>
-            <div class="flex items-baseline justify-center gap-1.5 mb-1.5 relative z-10">
-              <span class="text-3xl font-black text-emerald-900" id="dash-word-bunches">0</span>
-              <span class="text-sm font-bold text-emerald-600">송이</span>
-              <span class="text-3xl font-black text-emerald-900 ml-2" id="dash-word-remains">0</span>
-              <span class="text-sm font-bold text-emerald-600">알</span>
+          <!-- 기도+말씀 통합 수확량 카드 -->
+          <div class="p-6 rounded-2xl bg-indigo-50/80 border border-indigo-200 shadow-sm flex flex-col items-center justify-center relative overflow-hidden">
+            <div class="absolute -right-3 -top-3 text-5xl opacity-10">🍇</div>
+            <div class="text-sm font-bold text-indigo-500 mb-2 whitespace-nowrap relative z-10">기도+말씀 수확량</div>
+            <div class="flex items-baseline justify-center gap-2 mb-2 relative z-10">
+              <span class="text-4xl font-black text-indigo-900" id="dash-combined-bunches">0</span>
+              <span class="text-base font-bold text-indigo-600">송이</span>
+              <span class="text-4xl font-black text-indigo-900 ml-3" id="dash-combined-remains">0</span>
+              <span class="text-base font-bold text-indigo-600">알</span>
             </div>
-            <div class="text-[11px] font-semibold text-emerald-400/80 relative z-10">(총 누적 <span id="dash-word-total">0</span>알)</div>
+            <div class="text-xs font-semibold text-indigo-400/80 relative z-10">(총 누적 <span id="dash-combined-total">0</span>알)</div>
           </div>
 
-          <!-- 합계 카드 -->
-          <div class="p-5 rounded-2xl bg-gradient-to-br from-purple-100/90 to-fuchsia-100/90 border border-purple-200 shadow-sm flex flex-col items-center justify-center relative overflow-hidden">
+          <!-- 전체 합계 카드 -->
+          <div class="p-6 rounded-2xl bg-gradient-to-br from-purple-100/90 to-fuchsia-100/90 border border-purple-200 shadow-sm flex flex-col items-center justify-center relative overflow-hidden">
             <div class="absolute -right-3 -top-3 text-5xl opacity-10">🎯</div>
-            <div class="text-xs font-bold text-purple-700 mb-2 whitespace-nowrap relative z-10">전체 포도송이 합계</div>
+            <div class="text-sm font-bold text-purple-700 mb-2 whitespace-nowrap relative z-10">전체 포도송이 합계</div>
             <div class="flex items-baseline justify-center gap-1 relative z-10">
-              <span class="text-4xl font-black text-purple-900" id="dash-total-bunches">0</span>
-              <span class="text-sm font-bold text-purple-700">/ 61송이</span>
+              <span class="text-5xl font-black text-purple-900" id="dash-total-bunches">0</span>
+              <span class="text-lg font-bold text-purple-700">/ 61송이</span>
             </div>
           </div>
         </div>
 
-        <!-- 포도원 렌더링 영역 -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div id="vineyard-prayer-container" class="relative bg-white rounded-3xl overflow-hidden border-2 border-indigo-100 shadow-inner h-72 flex flex-col transition-all duration-300">
-            <div class="bg-indigo-50/90 px-4 py-3 border-b border-indigo-100 flex justify-between items-center z-30 relative backdrop-blur-sm">
-              <h3 class="font-bold text-indigo-900 flex items-center gap-2"><span>🙏</span> 기도 포도원</h3>
+        <!-- [수정] 포도원 렌더링 영역 (하나의 큰 포도원으로 통합) -->
+        <div class="w-full">
+          <div id="vineyard-combined-container" class="relative bg-white rounded-3xl overflow-hidden border-2 border-indigo-100 shadow-inner h-80 flex flex-col transition-all duration-300">
+            <div class="bg-indigo-50/90 px-5 py-3.5 border-b border-indigo-100 flex justify-between items-center z-30 relative backdrop-blur-sm">
+              <h3 class="font-bold text-indigo-900 flex items-center gap-2 text-lg"><span>🍇</span> 인왕지구 포도원 (기도+말씀)</h3>
             </div>
             <div class="flex-1 bg-[#f0f9ff] relative overflow-hidden rounded-b-3xl">
-              <div id="tree-prayer-bg" class="absolute inset-0 z-0"></div>
-              <div id="tree-prayer-container" class="absolute inset-0 z-10 pointer-events-none"></div>
-            </div>
-          </div>
-
-          <div id="vineyard-word-container" class="relative bg-white rounded-3xl overflow-hidden border-2 border-emerald-100 shadow-inner h-72 flex flex-col transition-all duration-300">
-            <div class="bg-emerald-50/90 px-4 py-3 border-b border-emerald-100 flex justify-between items-center z-30 relative backdrop-blur-sm">
-              <h3 class="font-bold text-emerald-900 flex items-center gap-2"><span>📖</span> 말씀 포도원</h3>
-            </div>
-            <div class="flex-1 bg-[#f0fdf4] relative overflow-hidden rounded-b-3xl">
-              <div id="tree-word-bg" class="absolute inset-0 z-0"></div>
-              <div id="tree-word-container" class="absolute inset-0 z-10 pointer-events-none"></div>
+              <div id="tree-combined-bg" class="absolute inset-0 z-0"></div>
+              <div id="tree-combined-container" class="absolute inset-0 z-10 pointer-events-none"></div>
             </div>
           </div>
         </div>
@@ -269,46 +247,32 @@
             <button onclick="closeAdminPanel()" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-lg transition whitespace-nowrap">패널 닫기</button>
           </div>
           
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- 기도 수정 -->
-            <div class="bg-white p-3 rounded-xl border border-red-100 shadow-sm flex flex-col gap-3">
-              <div class="font-bold text-indigo-700 text-sm flex items-center gap-1"><span>🙏</span> 기도 누적(총)알 수정</div>
+          <div class="grid grid-cols-1 gap-4">
+            <!-- [수정] 단일 통합 입력 폼 -->
+            <div class="bg-white p-4 rounded-xl border border-red-100 shadow-sm flex flex-col gap-3">
+              <div class="font-bold text-indigo-700 text-sm flex items-center gap-1"><span>🍇</span> 기도+말씀 누적(총)알 수정</div>
               <div class="flex items-center gap-2">
-                <button onclick="addGrape('prayer', -1)" class="w-10 h-9 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg">-</button>
-                <button onclick="addGrape('prayer', 1)" class="w-10 h-9 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 font-bold rounded-lg">+</button>
-                <div class="w-px h-6 bg-slate-200 mx-1"></div>
-                <div class="flex-1 flex items-center gap-1.5">
-                  <input type="number" id="manual-prayer" class="w-full h-9 text-center border border-slate-200 rounded-lg text-sm font-semibold focus:outline-none focus:border-indigo-400" placeholder="직접입력">
-                  <button onclick="setGrape('prayer')" class="px-3 h-9 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold rounded-lg shrink-0 transition">적용</button>
-                </div>
-              </div>
-            </div>
-
-            <!-- 말씀 수정 -->
-            <div class="bg-white p-3 rounded-xl border border-red-100 shadow-sm flex flex-col gap-3">
-              <div class="font-bold text-emerald-700 text-sm flex items-center gap-1"><span>📖</span> 말씀 누적(총)알 수정</div>
-              <div class="flex items-center gap-2">
-                <button onclick="addGrape('word', -1)" class="w-10 h-9 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg">-</button>
-                <button onclick="addGrape('word', 1)" class="w-10 h-9 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 font-bold rounded-lg">+</button>
-                <div class="w-px h-6 bg-slate-200 mx-1"></div>
-                <div class="flex-1 flex items-center gap-1.5">
-                  <input type="number" id="manual-word" class="w-full h-9 text-center border border-slate-200 rounded-lg text-sm font-semibold focus:outline-none focus:border-emerald-400" placeholder="직접입력">
-                  <button onclick="setGrape('word')" class="px-3 h-9 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold rounded-lg shrink-0 transition">적용</button>
+                <button onclick="addGrape('combined', -1)" class="w-12 h-10 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg">-</button>
+                <button onclick="addGrape('combined', 1)" class="w-12 h-10 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 font-bold rounded-lg">+</button>
+                <div class="w-px h-8 bg-slate-200 mx-2"></div>
+                <div class="flex-1 flex items-center gap-2">
+                  <input type="number" id="manual-combined" class="w-full h-10 text-center border border-slate-200 rounded-lg text-base font-semibold focus:outline-none focus:border-indigo-400" placeholder="직접입력">
+                  <button onclick="setGrape('combined')" class="px-4 h-10 bg-slate-800 hover:bg-slate-900 text-white text-sm font-bold rounded-lg shrink-0 transition">적용</button>
                 </div>
               </div>
             </div>
 
             <!-- 작은 여우 모드 -->
-            <div class="bg-red-50 p-4 rounded-xl border border-red-200 shadow-sm flex items-center justify-between col-span-1 md:col-span-2">
+            <div class="bg-red-50 p-4 rounded-xl border border-red-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <div class="font-bold text-red-700 text-sm flex items-center gap-1"><span>🦊</span> 작은 여우 모드 (위기 경보)</div>
                 <div class="text-[11px] text-red-600 font-medium mt-1 leading-relaxed">활성화 시 배경 경광등 및 여우 출몰 애니메이션이 작동합니다.</div>
               </div>
-              <button id="btn-fox-mode" onclick="toggleFoxMode()" class="px-4 h-10 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-lg transition whitespace-nowrap shadow-sm border border-red-500">경보 발령</button>
+              <button id="btn-fox-mode" onclick="toggleFoxMode()" class="px-4 h-10 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-lg transition whitespace-nowrap shadow-sm border border-red-500 w-full sm:w-auto">경보 발령</button>
             </div>
             
             <!-- 방문자 통계 그래프 -->
-            <div class="bg-white p-4 rounded-xl border border-red-100 shadow-sm col-span-1 md:col-span-2 mt-2">
+            <div class="bg-white p-4 rounded-xl border border-red-100 shadow-sm mt-2">
                 <div class="flex items-center justify-between mb-3">
                   <div class="font-bold text-slate-800 text-sm flex items-center gap-1"><span>📈</span> 방문자 통계 (관리자 전용)</div>
                   <div class="text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1.5 rounded-md border border-slate-200">
@@ -615,7 +579,7 @@
         </div>
       </section>
 
-      <!-- 말씀 인증 가이드 (NEW) -->
+      <!-- 말씀 인증 가이드 -->
       <section id="content-auth-word" class="bg-white rounded-3xl p-6 sm:p-7 border border-emerald-100 shadow-sm fade-in hidden">
         <div class="flex items-center justify-between mb-4">
           <div class="flex items-center gap-2">
@@ -703,7 +667,7 @@
     <!-- Footer -->
     <div class="text-center pt-8 pb-4 text-slate-400 text-xs whitespace-nowrap">
       <p class="font-medium text-slate-500 mb-1">인왕지구 포도원 프로젝트 | 2026</p>
-      <p class="text-slate-400 font-mono">ver 1.8.0</p>
+      <p class="text-slate-400 font-mono">ver 1.9.0</p>
     </div>
   </main>
 
@@ -728,14 +692,19 @@
   
     lucide.createIcons();
   
-    let grapeState = { prayer: 45, word: 18, foxMode: false };
+    // 단일 통합 데이터 (combined)
+    let grapeState = { combined: 0, foxMode: false };
     let lastUpdatedString = "최근 업데이트 없음";
   
     onValue(grapeRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
-        if(data.prayer !== undefined) grapeState.prayer = data.prayer;
-        if(data.word !== undefined) grapeState.word = data.word;
+        if(data.combined !== undefined) {
+          grapeState.combined = data.combined;
+        } else if (data.prayer !== undefined && data.word !== undefined) {
+          // 기존에 나뉘어 있던 데이터를 합쳐서 렌더링 (초기 호환성 유지)
+          grapeState.combined = data.prayer + data.word;
+        }
         if(data.foxMode !== undefined) grapeState.foxMode = data.foxMode;
         if(data.lastUpdated) lastUpdatedString = data.lastUpdated;
       }
@@ -795,25 +764,22 @@
     function renderFoxMode() {
       const btn = document.getElementById('btn-fox-mode');
       const alertBanner = document.getElementById('fox-alert-banner');
-      const prayerV = document.getElementById('vineyard-prayer-container');
-      const wordV = document.getElementById('vineyard-word-container');
+      const combinedV = document.getElementById('vineyard-combined-container');
 
       if (grapeState.foxMode) {
           if(btn) {
               btn.innerText = "경보 해제 (여우 잡기)";
-              btn.className = "px-4 h-10 bg-slate-700 hover:bg-slate-800 text-white text-xs font-bold rounded-lg transition whitespace-nowrap shadow-sm";
+              btn.className = "px-4 h-10 bg-slate-700 hover:bg-slate-800 text-white text-xs font-bold rounded-lg transition whitespace-nowrap shadow-sm w-full sm:w-auto";
           }
           if(alertBanner) alertBanner.classList.remove('hidden');
-          if(prayerV) prayerV.classList.add('ring-4', 'ring-red-500', 'ring-offset-2', 'animate-pulse');
-          if(wordV) wordV.classList.add('ring-4', 'ring-red-500', 'ring-offset-2', 'animate-pulse');
+          if(combinedV) combinedV.classList.add('ring-4', 'ring-red-500', 'ring-offset-2', 'animate-pulse');
       } else {
           if(btn) {
               btn.innerText = "경보 발령 (여우 출몰)";
-              btn.className = "px-4 h-10 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-lg transition whitespace-nowrap shadow-sm border border-red-500";
+              btn.className = "px-4 h-10 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-lg transition whitespace-nowrap shadow-sm border border-red-500 w-full sm:w-auto";
           }
           if(alertBanner) alertBanner.classList.add('hidden');
-          if(prayerV) prayerV.classList.remove('ring-4', 'ring-red-500', 'ring-offset-2', 'animate-pulse');
-          if(wordV) wordV.classList.remove('ring-4', 'ring-red-500', 'ring-offset-2', 'animate-pulse');
+          if(combinedV) combinedV.classList.remove('ring-4', 'ring-red-500', 'ring-offset-2', 'animate-pulse');
       }
     }
 
@@ -947,6 +913,7 @@
       });
     }
 
+    // [수정] 통합된 데이터만 조작
     window.addGrape = function(type, amount) {
       let newValue = grapeState[type] + amount;
       if (newValue < 0) newValue = 0;
@@ -977,38 +944,32 @@
       }
     }
   
+    // [수정] 통합된 UI 카드 렌더링
     function renderDashboard() {
-      const prayerBunches = Math.floor(grapeState.prayer / 20);
-      const prayerRemains = grapeState.prayer % 20;
-      const wordBunches = Math.floor(grapeState.word / 20);
-      const wordRemains = grapeState.word % 20;
+      const combinedBunches = Math.floor(grapeState.combined / 20);
+      const combinedRemains = grapeState.combined % 20;
       
-      document.getElementById('dash-prayer-bunches').innerText = prayerBunches;
-      document.getElementById('dash-prayer-remains').innerText = prayerRemains;
-      document.getElementById('dash-prayer-total').innerText = grapeState.prayer;
-
-      document.getElementById('dash-word-bunches').innerText = wordBunches;
-      document.getElementById('dash-word-remains').innerText = wordRemains;
-      document.getElementById('dash-word-total').innerText = grapeState.word;
+      document.getElementById('dash-combined-bunches').innerText = combinedBunches;
+      document.getElementById('dash-combined-remains').innerText = combinedRemains;
+      document.getElementById('dash-combined-total').innerText = grapeState.combined;
       
-      document.getElementById('dash-total-bunches').innerText = (prayerBunches + wordBunches);
+      document.getElementById('dash-total-bunches').innerText = combinedBunches;
   
-      drawDetailedVineyard('prayer', prayerBunches);
-      drawDetailedVineyard('word', wordBunches);
+      drawDetailedVineyard('combined', combinedBunches);
     }
   
     function drawDetailedVineyard(type, bunches) {
       const bgContainer = document.getElementById(`tree-${type}-bg`);
       const fgContainer = document.getElementById(`tree-${type}-container`);
       bgContainer.innerHTML = ''; fgContainer.innerHTML = '';
-      const isPrayer = type === 'prayer';
       
-      const skyGradient = isPrayer ? ['#e0f2fe', '#bae6fd'] : ['#ecfdf5', '#d1fae5'];
-      const hillBack = isPrayer ? '#dcfce7' : '#ccfbf1';
-      const hillFront = isPrayer ? '#bbf7d0' : '#a7f3d0';
-      const darkLeaf = isPrayer ? '#144225' : '#04382a'; 
-      const midLeaf = isPrayer ? '#16572e' : '#045e45';  
-      const lightLeaf = isPrayer ? '#1da750' : '#0e9e6e';
+      // 통합 포도원은 보라(기도) 계열과 초록(말씀) 계열의 중간, 혹은 산뜻한 하늘색/민트색 톤으로 적용
+      const skyGradient = ['#e0f2fe', '#bae6fd'];
+      const hillBack = '#dcfce7';
+      const hillFront = '#bbf7d0';
+      const darkLeaf = '#0f3a22'; 
+      const midLeaf = '#14532d';  
+      const lightLeaf = '#16a34a';
   
       let svg = `<svg viewBox="0 0 100 100" class="w-full h-full opacity-90" preserveAspectRatio="none">
           <defs><linearGradient id="sky-${type}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${skyGradient[0]}"/><stop offset="100%" stop-color="${skyGradient[1]}"/></linearGradient></defs>
@@ -1016,7 +977,7 @@
           <path d="M0,45 Q25,35 50,45 T100,40 L100,100 L0,100 Z" fill="${hillBack}"/>
           <path d="M0,55 Q30,45 60,55 T100,50 L100,100 L0,100 Z" fill="${hillFront}"/>`;
   
-      const rows = [{ y: 30, scale: 0.6 }, { y: 60, scale: 0.9 }, { y: 90, scale: 1.2 }];
+      const rows = [{ y: 25, scale: 0.6 }, { y: 55, scale: 0.9 }, { y: 85, scale: 1.2 }];
       rows.forEach(row => {
         svg += `<ellipse cx="50" cy="${row.y + row.scale * 6}" rx="60" ry="${row.scale * 4}" fill="rgba(107, 68, 35, 0.15)"/>`;
         for (let x = 5; x <= 95; x += 18) svg += `<rect x="${x}" y="${row.y - row.scale * 12}" width="${row.scale * 2}" height="${row.scale * 22}" fill="#5d4037" rx="${row.scale * 0.5}"/>`;
@@ -1042,19 +1003,19 @@
   
       const groundChars = ['🐇', '🐿️', '🦆', '🐢', '🐌', '🌻', '🌼', '🐕', '🐑'];
       const flyingChars = ['🦋', '🐞', '🐝', '🕊️'];
-      const groundCount = Math.floor(Math.random() * 2) + 2; 
+      const groundCount = Math.floor(Math.random() * 3) + 3; 
       for(let i = 0; i < groundCount; i++) {
         const charEl = document.createElement('div');
-        charEl.className = 'absolute text-[22px] sm:text-[28px] drop-shadow-md animate-hop';
+        charEl.className = 'absolute text-[24px] sm:text-[30px] drop-shadow-md animate-hop';
         charEl.style.left = `${10 + Math.random() * 80}%`; charEl.style.bottom = `${2 + Math.random() * 8}%`; 
         charEl.style.animationDuration = `${1.5 + Math.random()}s`; charEl.style.animationDelay = `${Math.random()}s`;
         charEl.innerText = groundChars[Math.floor(Math.random() * groundChars.length)];
         fgContainer.appendChild(charEl);
       }
-      const flyingCount = Math.floor(Math.random() * 2) + 1; 
+      const flyingCount = Math.floor(Math.random() * 2) + 2; 
       for(let i = 0; i < flyingCount; i++) {
         const charEl = document.createElement('div');
-        charEl.className = 'absolute text-xl sm:text-2xl drop-shadow-sm animate-float';
+        charEl.className = 'absolute text-2xl sm:text-3xl drop-shadow-sm animate-float';
         charEl.style.left = `${15 + Math.random() * 70}%`; charEl.style.top = `${10 + Math.random() * 40}%`; 
         charEl.style.animationDuration = `${2.5 + Math.random() * 2}s`; charEl.style.animationDelay = `${Math.random() * 2}s`;
         charEl.innerText = flyingChars[Math.floor(Math.random() * flyingChars.length)];
@@ -1074,8 +1035,8 @@
           }
       }
   
-      const vineRowsY = [30, 60, 90];
-      const maxCols = 10;
+      const vineRowsY = [25, 55, 85];
+      const maxCols = 15; // 전체 화면이 넓어졌으므로 15열까지 확장하여 겹침을 최소화
       
       for (let i = 0; i < bunches; i++) {
         const wrapper = document.createElement('div');
@@ -1086,7 +1047,7 @@
         const layerIdx = Math.floor(i / (3 * maxCols));
         
         let top = vineRowsY[rowIdx] + (colIdx % 2 === 0 ? -2 : 2) + (layerIdx * 4);
-        let left = 10 + (colIdx * (80 / (maxCols - 1))) + (layerIdx * 2.5);
+        let left = 5 + (colIdx * (90 / (maxCols - 1))) + (layerIdx * 2.5);
         
         wrapper.style.top = `${top}%`;
         wrapper.style.left = `${Math.min(left, 95)}%`;
